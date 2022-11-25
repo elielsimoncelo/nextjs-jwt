@@ -1,10 +1,10 @@
 import React from 'react';
 import nookies from 'nookies';
-import { tokenService } from '../src/services/auth/tokenService';
+import { withSession } from '../src/services/auth/session.decorator';
+// import { tokenService } from '../src/services/auth/tokenService';
 
 function AuthPageSSR(props) {
-
-  return (
+  return  (
     <div>
       <h1>
         Auth Page Server Side Render
@@ -18,14 +18,32 @@ function AuthPageSSR(props) {
 
 export default AuthPageSSR;
 
-export async function getServerSideProps(ctx) {
-  const cookies = nookies.get(ctx)
-  console.log('cookies', cookies);
-
+// COM DECORATORS
+export const getServerSideProps = withSession((ctx) => {
   return {
-    props: {
-      token: tokenService.get(ctx),
-    },
+    props: { 
+      session: ctx.req.session
+    }
   }
-}
+})
 
+// SEM DECORATORS
+// export async function getServerSideProps(ctx) {
+//   try {
+//     const session = await authService.getSession(ctx);
+//     console.log('session', session);
+  
+//     return {
+//       props: {
+//         session: session,
+//       },
+//     }
+//   } catch (e) {
+//     return { 
+//       redirect: {
+//         permanent: false,
+//         destination: '/?error=401'
+//       }
+//     }
+//   }
+// }
